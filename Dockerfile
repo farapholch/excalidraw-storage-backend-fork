@@ -25,6 +25,8 @@ RUN npm ci
 
 COPY --from=production_buildstage /home/node/app/dist /home/node/app/dist
 
+RUN sed -i -e 's/\r$//' entrypoint.sh
+
 CMD ["./entrypoint.sh"]
 
 FROM base as development
