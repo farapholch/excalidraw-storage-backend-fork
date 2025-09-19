@@ -7,6 +7,7 @@ import {
   NotFoundException,
   Param,
   Put,
+  Patch,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -44,6 +45,24 @@ export class FilesController {
 
     return {
       id,
+    };
+  }
+
+  @Patch(':id/timestamp')
+  async touch(@Param() params) {
+    const id = params.id;
+
+    const data = await this.storageService.get(id, this.namespace);
+    if (!data) {
+      throw new NotFoundException();
+    }
+    
+    await this.storageService.set(id, data, this.namespace);
+
+    this.logger.debug(`Touched file ${id}`);
+    return {
+      id,
+      updatedAt: new Date().toISOString(),
     };
   }
 }
